@@ -27,7 +27,13 @@
             align-items: stretch;
             animation: slideIn 0.5s ease-out;
         }
+        .desktop-container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+        }
         .form-container {
+            flex: 0 0 60%;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -85,7 +91,7 @@
             background-color: #e8f0fe;
         }
         .preview-container {
-            margin-top: 20px;
+            flex: 0 0 40%;
             height: 500px;
             border: 1px solid #dfe1e5;
             border-radius: 8px;
@@ -108,32 +114,46 @@
             0% { transform: translateY(20px); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
         }
+        @media (max-width: 768px) {
+            .desktop-container {
+                flex-direction: column;
+            }
+            .preview-container {
+                width: 100%;
+                height: 400px;
+                order: 2;
+                margin-top: 20px;
+            }
+            .form-container {
+                order: 1;
+            }
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <h1>URL Parameter Appender</h1>
     <div class="container">
-        <div class="form-container">
-            <input type="text" id="url-input" placeholder="Enter base URL (default will be used if empty)" value="https://static-fed.bigolive.tv/live/pages/bigolive/bigolive-fb-ad/id.html">
-            <input type="text" id="c-input" placeholder="Enter c parameter">
-            <input type="text" id="adset-input" placeholder="Enter af_adset parameter">
-            <input type="text" id="ad-input" placeholder="Enter af_ad parameter">
-            <button onclick="generateURL()">Generate URL</button>
-            <button onclick="copyResult()">Copy Result</button>
-            <div class="result">
-                <div>点击跳转（可能会产生访问数据）</div>
-                <div id="output-box" class="output-box"></div>
+        <div class="desktop-container">
+            <div class="form-container">
+                <input type="text" id="url-input" placeholder="Enter base URL (default will be used if empty)" value="https://static-fed.bigolive.tv/live/pages/bigolive/bigolive-fb-ad/id.html">
+                <input type="text" id="c-input" placeholder="Enter c parameter">
+                <input type="text" id="adset-input" placeholder="Enter af_adset parameter">
+                <input type="text" id="ad-input" placeholder="Enter af_ad parameter">
+                <button onclick="generateURL()">Generate URL</button>
+                <button onclick="copyResult()">Copy Result</button>
+                <div class="result">
+                    <div>Click the result to open</div>
+                    <div id="output-box" class="output-box"></div>
+                </div>
             </div>
-        </div>
-        <div class="preview-container">
-            <iframe id="preview-iframe" class="mobile-preview" src=""></iframe>
+            <div class="preview-container">
+                <iframe id="preview-iframe" class="mobile-preview" src=""></iframe>
+            </div>
         </div>
     </div>
 
     <script>
-        
-
         function generateURL() {
             const cInput = document.getElementById('c-input');
             const adsetInput = document.getElementById('adset-input');
