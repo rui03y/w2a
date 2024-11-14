@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>URL Parameter Appender</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f7f8fa;
+            color: #1a1a1a;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1s ease-in;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            animation: slideIn 0.5s ease-out;
+        }
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            height: auto;
+            min-height: 45px;
+            background-color: #ffffff;
+            border: 1px solid #dfe1e5;
+            color: #1a1a1a;
+            border-radius: 8px;
+            outline: none;
+            transition: box-shadow 0.3s;
+        }
+        input[type="text"]:focus {
+            box-shadow: 0 0 0 4px rgba(246, 134, 81, 0.3);
+        }
+        button {
+            padding: 12px;
+            background-color: #f68451;
+            color: #ffffff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+        button:hover {
+            background-color: #e67342;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .result {
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #f7f8fa;
+            border: 1px solid #dfe1e5;
+            border-radius: 8px;
+            word-break: break-all;
+            min-height: 45px;
+            color: #1a1a1a;
+            transition: box-shadow 0.3s;
+        }
+        .result:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .output-box {
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .output-box:hover {
+            background-color: #e8f0fe;
+        }
+        .preview-container {
+            margin-top: 20px;
+            height: 500px;
+            border: 1px solid #dfe1e5;
+            border-radius: 8px;
+            overflow: hidden;
+            animation: fadeIn 1s ease-in;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .preview-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes slideIn {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>URL Parameter Appender</h1>
+    <div class="container">
+        <div class="form-container">
+            <input type="text" id="url-input" placeholder="Enter base URL (default will be used if empty)" value="https://static-fed.bigolive.tv/live/pages/bigolive/bigolive-fb-ad/id.html">
+            <input type="text" id="c-input" placeholder="Enter c parameter">
+            <input type="text" id="adset-input" placeholder="Enter af_adset parameter">
+            <input type="text" id="ad-input" placeholder="Enter af_ad parameter">
+            <button onclick="generateURL()">Generate URL</button>
+            <button onclick="copyResult()">Copy Result</button>
+            <div class="result">
+                <div>Click the result to open</div>
+                <div id="output-box" class="output-box"></div>
+            </div>
+        </div>
+        <div class="preview-container">
+            <iframe id="preview-iframe" class="mobile-preview" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        
+
+        function generateURL() {
+            const cInput = document.getElementById('c-input');
+            const adsetInput = document.getElementById('adset-input');
+            const adInput = document.getElementById('ad-input');
+
+            cInput.value = encodeURIComponent(cInput.value.trim());
+            adsetInput.value = encodeURIComponent(adsetInput.value.trim());
+            adInput.value = encodeURIComponent(adInput.value.trim());
+            let baseUrl = document.getElementById('url-input').value.trim();
+            if (!baseUrl) {
+                baseUrl = 'https://static-fed.bigolive.tv/live/pages/bigolive/bigolive-fb-ad/id.html';
+            }
+            const cParam = document.getElementById('c-input').value.trim();
+            const adsetParam = document.getElementById('adset-input').value.trim();
+            const adParam = document.getElementById('ad-input').value.trim();
+
+            let params = [];
+            if (cParam) {
+                params.push(`c=${cParam}`);
+            }
+            if (adsetParam) {
+                params.push(`af_adset=${adsetParam}`);
+            }
+            if (adParam) {
+                params.push(`af_ad=${adParam}`);
+            }
+
+            let finalURL = baseUrl;
+            if (params.length > 0) {
+                finalURL += `?${params.join('&')}`;
+            }
+
+            const outputBox = document.getElementById('output-box');
+            outputBox.textContent = finalURL;
+            outputBox.onclick = function() {
+                if (confirm('Do you want to open this link?')) {
+                    window.open(finalURL, '_blank');
+                }
+            };
+
+            // Update preview area
+            const previewIframe = document.getElementById('preview-iframe');
+            previewIframe.src = finalURL;
+        }
+
+        function copyResult() {
+            const text = document.getElementById('output-box').textContent;
+            if (text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Copied successfully!');
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            } else {
+                alert('No result to copy.');
+            }
+        }
+    </script>
+</body>
+</html>
